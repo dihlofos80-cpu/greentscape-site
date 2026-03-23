@@ -1,3 +1,6 @@
+html {
+  overflow-x: hidden;
+}
 /* v1772609052 */
 :root {
   --green: #3b7d3b;
@@ -44,6 +47,7 @@ header.transparent {
 }
 
 .container {
+  max-width: 100%;
   max-width: min(1600px, 95vw);
   margin: 0 auto;
   padding: 0 16px;
@@ -311,6 +315,7 @@ header.transparent ~ main .hero {
 }
 
 .services-grid {
+  width: 100%;
   display: none;
 }
 
