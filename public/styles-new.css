@@ -757,4 +757,6 @@ footer .footer-inner {
   header .container { flex-direction: row; }
   header h1 { font-size: 14px; margin: 0; }
   header p { display: none; }
+
+@media (max-width: 480px) {
 }
