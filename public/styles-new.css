@@ -391,6 +391,10 @@ header.transparent ~ main .hero {
   .services-slide {
     flex: 0 0 calc(100% - 18px);
   }
+
+  body {
+    overflow-x: hidden;
+  }
 }
 
 .card {
@@ -709,6 +713,14 @@ footer .footer-inner {
     width: 32px;
     height: 32px;
     font-size: 14px;
+  }
+
+  .services-slider,
+  .gallery-slider {
+    overflow-x: hidden;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
   }
 }
 
