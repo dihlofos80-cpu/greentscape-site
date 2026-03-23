@@ -760,3 +760,13 @@ footer .footer-inner {
 
 @media (max-width: 480px) {
 }
+
+@media (max-width: 480px) {
+}
+
+@media (max-width: 480px) {
+  header { padding: 0; min-height: 25px; }
+  header .logo img { height: 20px; }
+  header .site-title { font-size: 12px; }
+  header .header-contacts { display: none; }
+}
