@@ -751,4 +751,10 @@ footer .footer-inner {
   header { padding: 5px 0; }
   header h1 { font-size: 15px; }
   header p { font-size: 10px; }
+
+@media (max-width: 480px) {
+  header { padding: 3px 0; min-height: 40px; }
+  header .container { flex-direction: row; }
+  header h1 { font-size: 14px; margin: 0; }
+  header p { display: none; }
 }
