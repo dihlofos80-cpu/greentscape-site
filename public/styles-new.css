@@ -740,4 +740,10 @@ footer .footer-inner {
   color: #264d26;
   text-decoration: underline;
 }
+
+/* Mobile header fix */
+@media (max-width: 480px) {
+  header { padding: 8px 0; }
+  header h1 { font-size: 17px; }
+  header p { font-size: 11px; }
 }
