@@ -742,31 +742,45 @@ footer .footer-inner {
 }
 
 /* Mobile header fix */
-@media (max-width: 480px) {
-  header { padding: 8px 0; }
   header h1 { font-size: 17px; }
   header p { font-size: 11px; }
 
-@media (max-width: 480px) {
-  header { padding: 5px 0; }
   header h1 { font-size: 15px; }
   header p { font-size: 10px; }
 
-@media (max-width: 480px) {
-  header { padding: 3px 0; min-height: 40px; }
   header .container { flex-direction: row; }
   header h1 { font-size: 14px; margin: 0; }
   header p { display: none; }
 
-@media (max-width: 480px) {
-}
 
-@media (max-width: 480px) {
-}
 
-@media (max-width: 480px) {
-  header { padding: 0; min-height: 25px; }
   header .logo img { height: 20px; }
   header .site-title { font-size: 12px; }
   header .header-contacts { display: none; }
+}
+
+@media (max-width: 480px) {
+  header .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+  }
+  header .logo {
+    width: 30px;
+    flex-shrink: 0;
+  }
+  header .logo img {
+    height: 25px;
+    width: auto;
+  }
+  header .site-title {
+    font-size: 14px;
+    margin: 0;
+    white-space: nowrap;
+  }
+  header .header-contacts {
+    display: none;
+  }
 }
