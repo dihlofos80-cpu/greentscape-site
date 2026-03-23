@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -64,50 +63,6 @@ function loadContent() {
 // Save content
 function saveContent(data) {
   fs.writeFileSync(CONTENT_PATH, JSON.stringify(data, null, 2), 'utf8');
-}
-
-// Helper: compute hash of a file
-function computeFileHash(filePath) {
-  const data = fs.readFileSync(filePath);
-  return crypto.createHash('md5').update(data).digest('hex');
-}
-
-// Helper: handle uploaded file - reuse existing if same hash, otherwise rename to hash
-function handleUploadedFile(tempFilePath, currentPath) {
-  const tempHash = computeFileHash(tempFilePath);
-  const uploadsDir = path.join(__dirname, 'public/uploads');
-  
-  // Check all existing files in uploads dir
-  const existingFiles = fs.readdirSync(uploadsDir);
-  for (const file of existingFiles) {
-    if (file.includes(':')) continue; // skip Zone.Identifier files
-    const existingPath = path.join(uploadsDir, file);
-    try {
-      const existingHash = computeFileHash(existingPath);
-      if (existingHash === tempHash) {
-        // Same file exists - delete temp, return existing path
-        fs.unlinkSync(tempFilePath);
-        return { path: `/uploads/${file}`, reused: true };
-      }
-    } catch (e) {
-      // skip problematic files
-    }
-  }
-  
-  // No match - rename temp file to hash name
-  const newFilename = tempHash;
-  const newPath = path.join(uploadsDir, newFilename);
-  fs.renameSync(tempFilePath, newPath);
-  
-  // Delete old file if exists and different
-  if (currentPath && currentPath !== `/images/logo.png`) {
-    const oldFilePath = path.join(__dirname, 'public', currentPath);
-    if (fs.existsSync(oldFilePath) && oldFilePath !== newPath) {
-      fs.unlinkSync(oldFilePath);
-    }
-  }
-  
-  return { path: `/uploads/${newFilename}`, reused: false };
 }
 
 // Home page
@@ -202,8 +157,15 @@ app.post('/admin', upload.fields([{ name: 'heroImage', maxCount: 1 }, { name: 'l
 
   // Handle logo file upload
   if (req.files && req.files['logoFile']) {
-    const result = handleUploadedFile(req.files['logoFile'][0].path, currentContent.logoPath);
-    newContent.logoPath = result.path;
+    // Delete old logo if it exists and is not the default one
+    if (currentContent.logoPath && currentContent.logoPath !== '/images/logo.png') {
+      const oldLogoPath = path.join(__dirname, 'public', currentContent.logoPath);
+      if (fs.existsSync(oldLogoPath)) {
+        fs.unlinkSync(oldLogoPath);
+      }
+    }
+    const uploadedLogoFilename = req.files['logoFile'][0].filename;
+    newContent.logoPath = `/uploads/${uploadedLogoFilename}`;
   } else if (form.logoPath === '') { // If logo was explicitly cleared from form
     if (currentContent.logoPath && currentContent.logoPath !== '/images/logo.png') {
       const oldLogoPath = path.join(__dirname, 'public', currentContent.logoPath);
@@ -216,8 +178,14 @@ app.post('/admin', upload.fields([{ name: 'heroImage', maxCount: 1 }, { name: 'l
 
   // Handle hero image upload
   if (req.files && req.files['heroImage']) {
-    const result = handleUploadedFile(req.files['heroImage'][0].path, currentContent.heroImage);
-    newContent.heroImage = result.path;
+    if (currentContent.heroImage) {
+      const oldImagePath = path.join(__dirname, 'public', currentContent.heroImage);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+    }
+    const uploadedHeroFilename = req.files['heroImage'][0].filename;
+    newContent.heroImage = `/uploads/${uploadedHeroFilename}`;
   }
   // Если новый файл не загружен - оставляем старое значение (уже в newContent.heroImage = currentContent.heroImage)
 
