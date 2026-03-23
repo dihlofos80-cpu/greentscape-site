@@ -604,15 +604,42 @@ footer .footer-inner {
 
   header {
     position: static;
+    padding: 4px 12px;
   }
 
   .header-inner {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .logo img {
+    height: 28px !important;
+    opacity: 0.7 !important;
+  }
+
+  .site-title {
+    font-size: 14px !important;
+    margin: 0 !important;
+    line-height: 1.2;
+  }
+
+  .header-contacts {
+    font-size: 11px !important;
+    gap: 4px 10px !important;
+  }
+
+  .header-contacts .label {
+    display: none;
+  }
+
+  .header-contacts a {
+    padding: 2px 0;
   }
 
   .hero {
-    padding-top: 26px;
+    padding-top: 10px;
   }
 
   .hero-image {
