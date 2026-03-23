@@ -1,0 +1,17 @@
+{
+  "name": "greentscape-site",
+  "version": "1.0.0",
+  "description": "GreenScape — одностраничный сайт с простой админкой для редактирования контента",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cookie-parser": "^1.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^8.0.1"
+  }
+}

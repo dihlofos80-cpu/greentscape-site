@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build
+dist/
+*.tar.gz
+*.zip
+greenscape-deploy.tar.gz
+
+# Environment
+.env
+.env.local
+
+# Uploads (runtime)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

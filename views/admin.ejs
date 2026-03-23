@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>GreenScape — админка</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="/images/logo1.png">
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 20px 16px 40px; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    p { font-size: 14px; color: #555; }
+    form { margin-top: 20px; background: #fff; border-radius: 10px; padding: 16px; border: 1px solid #ddd; }
+    label { display: block; font-size: 13px; margin: 10px 0 4px; font-weight: 600; }
+    input[type="text"], textarea { width: 100%; padding: 7px 8px; font-size: 14px; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; }
+    textarea { resize: vertical; min-height: 60px; }
+    .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 20px; }
+    .service-block { border-top: 1px solid #eee; margin-top: 14px; padding-top: 10px; }
+    button { margin-top: 18px; padding: 9px 18px; border-radius: 999px; border: none; background: #3b7d3b; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; }
+    button:hover { background: #2f612f; }
+    .delete-btn { background: #dc3545; margin-left: 10px; }
+    .delete-btn:hover { background: #c82333; }
+    .top-link { margin-top: 10px; font-size: 13px; }
+    .top-link a { color: #3b7d3b; text-decoration: underline; text-underline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>GreenScape — админка</h1>
+    <p>Здесь ты можешь править основные тексты на сайте: заголовок, подзаголовок, контакты и описания услуг. После изменения нажми «Сохранить», и обнови основную страницу.</p>
+    <div class="top-link">
+      <a href="/" target="_blank">Открыть сайт в новой вкладке</a>
+    </div>
+
+    <% if (content.logoPath) { %>
+      <div style="margin-top: 20px; padding: 16px; background: #fff; border-radius: 10px; border: 1px solid #ddd;">
+        <p>Текущий логотип:</p>
+        <p><img src="<%= content.logoPath %>" alt="Логотип сайта" style="height: <%= content.logoHeight || '50px' %>; border:1px solid #ddd; margin-bottom:10px;"></p>
+        <form method="post" action="/admin/delete-logo">
+          <button type="submit" class="delete-btn">Удалить логотип</button>
+        </form>
+      </div>
+    <% } %>
+
+    <% if (content.heroImage) { %>
+      <div style="margin-top: 20px; padding: 16px; background: #fff; border-radius: 10px; border: 1px solid #ddd;">
+        <p>Текущее hero-изображение:</p>
+        <p><img src="<%= content.heroImage %>" alt="Hero" style="max-width:100%; height:auto; border:1px solid #ddd; margin-bottom:10px;"></p>
+        <form method="post" action="/admin/delete-hero-image">
+          <button type="submit" class="delete-btn">Удалить изображение</button>
+        </form>
+      </div>
+    <% } %>
+
+    <% if (content.gallery && content.gallery.length > 0) { %>
+      <div style="margin-top: 20px; padding: 16px; background: #fff; border-radius: 10px; border: 1px solid #ddd;">
+        <p>Галерея (<%= content.gallery.length %> фото):</p>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+          <% content.gallery.forEach(function(img, index) { %>
+            <div style="position:relative;">
+              <img src="<%= img %>" alt="Галерея <%= index+1 %>" style="width:120px; height:80px; object-fit:cover; border:1px solid #ddd; border-radius:6px;">
+              <form method="post" action="/admin/delete-gallery-image" style="margin:0;">
+                <input type="hidden" name="imagePath" value="<%= img %>">
+                <button type="submit" class="delete-btn" style="padding:2px 6px; font-size:11px; margin-top:2px;">✕</button>
+              </form>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+
+    <form method="post" action="/admin" enctype="multipart/form-data">
+      <label for="siteTitle">Название сайта</label>
+      <input type="color" id="titleColor" name="titleColor" value="#ffffff">
+      <label for="titleColorScrolled">Цвет текста шапки при скролле</label>
+      <input type="color" id="titleColorScrolled" name="titleColorScrolled" value="<%= content.titleColorScrolled || '#222222' %>">
+      <label for="headerBg">Фон шапки</label>
+      <input type="color" id="headerBg" name="headerBg" value="<%= content.headerBg || '#264d26' %>">
+      <label for="headerBgScrolled">Фон шапки при скролле</label>
+      <input type="color" id="headerBgScrolled" name="headerBgScrolled" value="<%= content.headerBgScrolled || '#264d26' %>">
+      <label for="gradientColor">Цвет градиента шапки</label>
+      <input type="color" id="gradientColor" name="gradientColor" value="<%= content.gradientColor || "#264d26" %>">
+      <select id="gradientDeg" name="gradientDeg"><option value="90deg" <%= content.gradientDeg === '90deg' ? 'selected' : '' %>>90° (слева направо)</option><option value="135deg" <%= content.gradientDeg === '135deg' ? 'selected' : '' %>>135° (диагональ)</option><option value="180deg" <%= content.gradientDeg === '180deg' ? 'selected' : '' %>>180° (сверху вниз)</option></select>
+      <input type="text" id="siteTitle" name="siteTitle" value="<%= content.siteTitle || '' %>">
+
+      <label for="logoFile">Логотип (файл)</label>
+      <input type="file" id="logoFile" name="logoFile" accept="image/*">
+
+      <label for="logoHeight">Высота логотипа (например, 50px)</label>
+      <input type="text" id="logoHeight" name="logoHeight" value="<%= content.logoHeight || '50px' %>">
+
+      <label for="heroImage">Главное изображение</label>
+      <input type="file" id="heroImage" name="heroImage" accept="image/*">
+
+      <label for="galleryImages">Галерея (до 10 фото)</label>
+      <input type="file" id="galleryImages" name="galleryImages" accept="image/*" multiple>
+
+      <label for="heroTitle">Заголовок на главной</label>
+      <input type="text" id="heroTitle" name="heroTitle" value="<%= content.heroTitle || '' %>">
+
+      <label for="heroSubtitle">Подзаголовок на главной</label>
+      <textarea id="heroSubtitle" name="heroSubtitle"><%= content.heroSubtitle || '' %></textarea>
+
+      <div class="row">
+        <div>
+          <label for="phone">Телефон</label>
+          <input type="text" id="phone" name="phone" value="<%= content.phone || '' %>">
+        </div>
+        <div>
+          <label for="email">Почта</label>
+          <input type="text" id="email" name="email" value="<%= content.email || '' %>">
+        </div>
+      </div>
+
+      <label for="region">Регион</label>
+      <input type="text" id="region" name="region" value="<%= content.region || '' %>">
+
+      <div class="service-block">
+        <strong>Услуги</strong>
+        <div class="row">
+          <div>
+            <label for="service1Title">Услуга 1 — заголовок</label>
+            <input type="text" id="service1Title" name="service1Title" value="<%= (content.services && content.services[0] && content.services[0].title) || '' %>">
+            <label for="service1Text">Услуга 1 — описание</label>
+            <textarea id="service1Text" name="service1Text"><%= (content.services && content.services[0] && content.services[0].text) || '' %></textarea>
+          </div>
+          <div>
+            <label for="service2Title">Услуга 2 — заголовок</label>
+            <input type="text" id="service2Title" name="service2Title" value="<%= (content.services && content.services[1] && content.services[1].title) || '' %>">
+            <label for="service2Text">Услуга 2 — описание</label>
+            <textarea id="service2Text" name="service2Text"><%= (content.services && content.services[1] && content.services[1].text) || '' %></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="service3Title">Услуга 3 — заголовок</label>
+            <input type="text" id="service3Title" name="service3Title" value="<%= (content.services && content.services[2] && content.services[2].title) || '' %>">
+            <label for="service3Text">Услуга 3 — описание</label>
+            <textarea id="service3Text" name="service3Text"><%= (content.services && content.services[2] && content.services[2].text) || '' %></textarea>
+          </div>
+          <div>
+            <label for="service4Title">Услуга 4 — заголовок</label>
+            <input type="text" id="service4Title" name="service4Title" value="<%= (content.services && content.services[3] && content.services[3].title) || '' %>">
+            <label for="service4Text">Услуга 4 — описание</label>
+            <textarea id="service4Text" name="service4Text"><%= (content.services && content.services[3] && content.services[3].text) || '' %></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="service5Title">Услуга 5 — заголовок</label>
+            <input type="text" id="service5Title" name="service5Title" value="<%= (content.services && content.services[4] && content.services[4].title) || '' %>">
+            <label for="service5Text">Услуга 5 — описание</label>
+            <textarea id="service5Text" name="service5Text"><%= (content.services && content.services[4] && content.services[4].text) || '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="margin-top:30px;">Ориентировочные цены</h2>
+      <div class="row">
+        <div>
+          <label for="price1Title">Цена 1 — название</label>
+          <input type="text" id="price1Title" name="price1Title" value="<%= (content.prices && content.prices[0] && content.prices[0].title) || '' %>">
+          <label for="price1Price">Цена 1 — стоимость</label>
+          <input type="text" id="price1Price" name="price1Price" value="<%= (content.prices && content.prices[0] && content.prices[0].price) || '' %>">
+          <label for="price1Desc">Цена 1 — описание</label>
+          <textarea id="price1Desc" name="price1Desc"><%= (content.prices && content.prices[0] && content.prices[0].desc) || '' %></textarea>
+        </div>
+        <div>
+          <label for="price2Title">Цена 2 — название</label>
+          <input type="text" id="price2Title" name="price2Title" value="<%= (content.prices && content.prices[1] && content.prices[1].title) || '' %>">
+          <label for="price2Price">Цена 2 — стоимость</label>
+          <input type="text" id="price2Price" name="price2Price" value="<%= (content.prices && content.prices[1] && content.prices[1].price) || '' %>">
+          <label for="price2Desc">Цена 2 — описание</label>
+          <textarea id="price2Desc" name="price2Desc"><%= (content.prices && content.prices[1] && content.prices[1].desc) || '' %></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="price3Title">Цена 3 — название</label>
+          <input type="text" id="price3Title" name="price3Title" value="<%= (content.prices && content.prices[2] && content.prices[2].title) || '' %>">
+          <label for="price3Price">Цена 3 — стоимость</label>
+          <input type="text" id="price3Price" name="price3Price" value="<%= (content.prices && content.prices[2] && content.prices[2].price) || '' %>">
+          <label for="price3Desc">Цена 3 — описание</label>
+          <textarea id="price3Desc" name="price3Desc"><%= (content.prices && content.prices[2] && content.prices[2].desc) || '' %></textarea>
+        </div>
+        <div>
+          <label for="price4Title">Цена 4 — название</label>
+          <input type="text" id="price4Title" name="price4Title" value="<%= (content.prices && content.prices[3] && content.prices[3].title) || '' %>">
+          <label for="price4Price">Цена 4 — стоимость</label>
+          <input type="text" id="price4Price" name="price4Price" value="<%= (content.prices && content.prices[3] && content.prices[3].price) || '' %>">
+          <label for="price4Desc">Цена 4 — описание</label>
+          <textarea id="price4Desc" name="price4Desc"><%= (content.prices && content.prices[3] && content.prices[3].desc) || '' %></textarea>
+        </div>
+      </div>
+
+      <h2 style="margin-top:30px;">Почему с нами удобно</h2>
+      <div class="row">
+        <div>
+          <label for="price1Title2">Цена 1 — название</label>
+          <input type="text" id="price1Title2" name="price1Title2" value="<%= (content.prices2 && content.prices2[0] && content.prices2[0].title) || '' %>">
+          <label for="price1Price2">Цена 1 — стоимость</label>
+          <input type="text" id="price1Price2" name="price1Price2" value="<%= (content.prices2 && content.prices2[0] && content.prices2[0].price) || '' %>">
+          <label for="price1Desc2">Цена 1 — описание</label>
+          <textarea id="price1Desc2" name="price1Desc2"><%= (content.prices2 && content.prices2[0] && content.prices2[0].desc) || '' %></textarea>
+        </div>
+        <div>
+          <label for="price2Title2">Цена 2 — название</label>
+          <input type="text" id="price2Title2" name="price2Title2" value="<%= (content.prices2 && content.prices2[1] && content.prices2[1].title) || '' %>">
+          <label for="price2Price2">Цена 2 — стоимость</label>
+          <input type="text" id="price2Price2" name="price2Price2" value="<%= (content.prices2 && content.prices2[1] && content.prices2[1].price) || '' %>">
+          <label for="price2Desc2">Цена 2 — описание</label>
+          <textarea id="price2Desc2" name="price2Desc2"><%= (content.prices2 && content.prices2[1] && content.prices2[1].desc) || '' %></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="price3Title2">Цена 3 — название</label>
+          <input type="text" id="price3Title2" name="price3Title2" value="<%= (content.prices2 && content.prices2[2] && content.prices2[2].title) || '' %>">
+          <label for="price3Price2">Цена 3 — стоимость</label>
+          <input type="text" id="price3Price2" name="price3Price2" value="<%= (content.prices2 && content.prices2[2] && content.prices2[2].price) || '' %>">
+          <label for="price3Desc2">Цена 3 — описание</label>
+          <textarea id="price3Desc2" name="price3Desc2"><%= (content.prices2 && content.prices2[2] && content.prices2[2].desc) || '' %></textarea>
+        </div>
+        <div>
+          <label for="price4Title2">Цена 4 — название</label>
+          <input type="text" id="price4Title2" name="price4Title2" value="<%= (content.prices2 && content.prices2[3] && content.prices2[3].title) || '' %>">
+          <label for="price4Price2">Цена 4 — стоимость</label>
+          <input type="text" id="price4Price2" name="price4Price2" value="<%= (content.prices2 && content.prices2[3] && content.prices2[3].price) || '' %>">
+          <label for="price4Desc2">Цена 4 — описание</label>
+          <textarea id="price4Desc2" name="price4Desc2"><%= (content.prices2 && content.prices2[3] && content.prices2[3].desc) || '' %></textarea>
+        </div>
+      </div>
+
+      <h3>Оформление блоков</h3>
+      <div class="row">
+        <div>
+          <label for="sectionBg">Фон блоков (что делаем, работы, цены, контакты)</label>
+          <input type="color" id="sectionBg" name="sectionBg" value="<%= content.sectionBg || '#f8f9f5' %>">
+        </div>
+        <div>
+          <label for="cardBg">Фон карточек</label>
+          <input type="color" id="cardBg" name="cardBg" value="<%= content.cardBg || '#ffffff' %>">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="footerBg">Фон подвала</label>
+          <input type="color" id="footerBg" name="footerBg" value="<%= content.footerBg || '#1b361b' %>">
+        </div>
+        <div>
+          <label for="footerText">Цвет текста подвала</label>
+          <input type="color" id="footerText" name="footerText" value="<%= content.footerText || '#ffffff' %>">
+          <label for="formBg">Фон формы заявки</label>
+          <input type="color" id="formBg" name="formBg" value="<%= content.formBg || '#ffffff' %>">
+          <label for="formText">Цвет текста формы заявки</label>
+          <input type="color" id="formText" name="formText" value="<%= content.formText || '#222222' %>">
+        </div>
+      </div>
+
+      <button type="button" onclick="resetTheme()" class="delete-btn" style="margin-right:10px;">Сбросить тему</button>
+      <button type="submit">Сохранить</button>
+      <script>
+        function resetTheme() {
+          if (confirm('Сбросить оформление сайта? Контент останется без изменений.')) {
+            document.getElementById('titleColor').value = '#ffffff';
+            document.getElementById('titleColorScrolled').value = '#222222';
+            document.getElementById('headerBg').value = '#264d26';
+            document.getElementById('headerBgScrolled').value = '#264d26';
+            document.getElementById('gradientColor').value = '#1b361b';
+            document.getElementById('gradientDeg').value = '180deg';
+            document.getElementById('logoHeight').value = '80px';
+            document.getElementById('sectionBg').value = '#f8f9f5';
+            document.getElementById('cardBg').value = '#ffffff';
+            document.getElementById('footerBg').value = '#1b361b';
+            document.getElementById('footerText').value = '#ffffff';
+            document.getElementById('formBg').value = '#ffffff';
+            document.getElementById('formText').value = '#222222';
+            alert('Тема сброшена! Нажми "Сохранить" чтобы применить.');
+          }
+        }
+      </script>
+    </form>
+  </div>
+</body>
+</html>
