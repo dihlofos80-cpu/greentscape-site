@@ -6,7 +6,7 @@
   "headerBgScrolled": "#f1ebe0",
   "gradientColor": "#264d26",
   "gradientDeg": "135deg",
-  "logoPath": "/images/logo-new.png",
+  "logoPath": "/uploads/1c100cd25d3a336fa45c246f476db3d1",
   "logoHeight": "50px",
   "sectionBg": "#f5f0e6",
   "cardBg": "#f1ebe0",
@@ -85,7 +85,7 @@
       "desc": "Связь по телефону и мессенджерам, фото‑отчёты по этапам работ, внятные сроки и условия."
     }
   ],
-  "heroImage": "/images/hero-new.jpg",
+  "heroImage": "/uploads/bbae11bed57d7a0e2cbc43fcf16188d7",
   "gallery": [
     "/uploads/d1c0be7d06b10cdc545d557f7cceea0b",
     "/uploads/f3da2550489faee28918b40d99a3b2ec",
