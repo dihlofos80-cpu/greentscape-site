@@ -35,9 +35,21 @@ app.use((req, res, next) => {
   next();
 });
 
-// Setup multer for file uploads
+// Setup multer for file uploads - store in public/images/ with unique names
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/images/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, ext).replace(/\s+/g, '-');
+    cb(null, baseName + '-' + uniqueSuffix + ext);
+  }
+});
+
 const upload = multer({
-  dest: 'public/uploads/', // will store uploads in public/uploads/
+  storage: storage,
   limits: {
     fileSize: 15 * 1024 * 1024 // 15MB limit
   }
@@ -165,7 +177,7 @@ app.post('/admin', upload.fields([{ name: 'heroImage', maxCount: 1 }, { name: 'l
       }
     }
     const uploadedLogoFilename = req.files['logoFile'][0].filename;
-    newContent.logoPath = `/uploads/${uploadedLogoFilename}`;
+    newContent.logoPath = `/images/${uploadedLogoFilename}`;
   } else if (form.logoPath === '') { // If logo was explicitly cleared from form
     if (currentContent.logoPath && currentContent.logoPath !== '/images/logo.png') {
       const oldLogoPath = path.join(__dirname, 'public', currentContent.logoPath);
@@ -185,7 +197,7 @@ app.post('/admin', upload.fields([{ name: 'heroImage', maxCount: 1 }, { name: 'l
       }
     }
     const uploadedHeroFilename = req.files['heroImage'][0].filename;
-    newContent.heroImage = `/uploads/${uploadedHeroFilename}`;
+    newContent.heroImage = `/images/${uploadedHeroFilename}`;
   }
   // Если новый файл не загружен - оставляем старое значение (уже в newContent.heroImage = currentContent.heroImage)
 
@@ -193,7 +205,7 @@ app.post('/admin', upload.fields([{ name: 'heroImage', maxCount: 1 }, { name: 'l
   if (req.files && req.files['galleryImages']) {
     const newGalleryImages = [...(currentContent.gallery || [])];
     req.files['galleryImages'].forEach(file => {
-      newGalleryImages.push(`/uploads/${file.filename}`);
+      newGalleryImages.push(`/images/${file.filename}`);
     });
     newContent.gallery = newGalleryImages;
   }
