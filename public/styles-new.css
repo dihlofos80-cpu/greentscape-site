@@ -642,6 +642,10 @@ footer .footer-inner {
     padding-top: 10px;
   }
 
+  .section-title {
+    font-size: 22px;
+  }
+
   .hero-image {
     order: -1;
   }
