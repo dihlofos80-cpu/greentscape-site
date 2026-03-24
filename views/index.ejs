@@ -102,38 +102,84 @@
       <h2 class="section-title">Примеры работ</h2>
       
       <% if (content.gallery && content.gallery.length > 0) { %>
-      <div class="gallery-slider">
-        <button class="gallery-btn gallery-prev" onclick="moveSlide(-1)">&#10094;</button>
-        <div class="gallery-wrapper">
-          <div class="gallery-track" id="galleryTrack">
-            <% 
-            const itemsPerSlide = 3;
-            for (let i = 0; i < content.gallery.length; i += itemsPerSlide) { 
-              const slideImages = content.gallery.slice(i, i + itemsPerSlide);
-            %>
-              <div class="gallery-slide">
-                <div class="gallery-images-row">
-                  <% slideImages.forEach(function(img, idx) { %>
-                    <div class="gallery-image-item">
-                      <img src="<%= img %>" alt="Пример работы <%= i + idx + 1 %>">
-                    </div>
-                  <% }); %>
-                </div>
-              </div>
-            <% } %>
-          </div>
+      <div class="fullscreen-gallery">
+        <div class="fullscreen-gallery-inner">
+          <% content.gallery.forEach(function(img, idx) { %>
+            <div class="fullscreen-slide <%= idx === 0 ? 'active' : '' %>">
+              <img src="<%= img %>" alt="Пример работы <%= idx + 1 %>">
+            </div>
+          <% }); %>
         </div>
-        <button class="gallery-btn gallery-next" onclick="moveSlide(1)">&#10095;</button>
+        <div class="gallery-progress">
+          <div class="gallery-progress-bar" id="galleryProgressBar"></div>
+        </div>
+        <div class="gallery-counter">
+          <span id="galleryCurrent">1</span> / <%= content.gallery.length %>
+        </div>
       </div>
-      <div class="container">
-        <div class="gallery-dots" id="galleryDots"></div>
+      <script>
+        // Auto-advance gallery every 4 seconds
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.fullscreen-slide');
+        const totalSlides = slides.length;
+        
+        function showSlide(idx) {
+          slides.forEach(s => s.classList.remove('active'));
+          slides[idx].classList.add('active');
+          document.getElementById('galleryCurrent').textContent = idx + 1;
+          document.getElementById('galleryProgressBar').style.width = ((idx + 1) / totalSlides * 100) + '%';
+        }
+        
+        function nextSlide() {
+          currentSlide = (currentSlide + 1) % totalSlides;
+          showSlide(currentSlide);
+        }
+        
+        // Progress bar animation
+        let progressInterval = setInterval(() => {
+          const bar = document.getElementById('galleryProgressBar');
+          const currentWidth = parseFloat(bar.style.width) || 0;
+          bar.style.width = (currentWidth + 2.5) + '%';
+          if (currentWidth >= 100) {
+            nextSlide();
+          }
+        }, 100);
+        
+        // Pause on hover
+        document.querySelector('.fullscreen-gallery')?.addEventListener('mouseenter', () => {
+          clearInterval(progressInterval);
+        });
+        document.querySelector('.fullscreen-gallery')?.addEventListener('mouseleave', () => {
+          progressInterval = setInterval(() => {
+            const bar = document.getElementById('galleryProgressBar');
+            const currentWidth = parseFloat(bar.style.width) || 0;
+            bar.style.width = (currentWidth + 2.5) + '%';
+            if (currentWidth >= 100) {
+              nextSlide();
+            }
+          }, 100);
+        });
+        
+        // Touch swipe support
+        let touchStartX = 0;
+        document.querySelector('.fullscreen-gallery')?.addEventListener('touchstart', e => {
+          touchStartX = e.touches[0].clientX;
+        });
+        document.querySelector('.fullscreen-gallery')?.addEventListener('touchend', e => {
+          const diff = touchStartX - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+              currentSlide = (currentSlide + 1) % totalSlides;
+            } else {
+              currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            }
+            showSlide(currentSlide);
+            document.getElementById('galleryProgressBar').style.width = '0%';
+          }
+        });
+      </script>
       <% } else { %>
-        <p class="portfolio-note">Фотографии работ скоро появятся. Здесь можно разместить фотографии готовых объектов: до/после, отдельные элементы дизайна, посадки и газон.</p>
-        <ul class="portfolio-list">
-          <li>Благоустройство участка у частного дома — 8 соток</li>
-          <li>Озеленение территории у таунхауса</li>
-          <li>Комплексное обновление старого сада</li>
-        </ul>
+        <p class="portfolio-note">Фотографии работ скоро появятся.</p>
       <% } %>
     </div>
   </section>
